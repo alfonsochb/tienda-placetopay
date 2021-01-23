@@ -19,6 +19,25 @@
             body {
                 font-family: 'Nunito';
             }
+            input[type=text]{
+                display: block;
+                width: 100%;
+                min-width: 300px;
+                padding: .375rem .75rem;
+                margin-bottom: 5px;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #ced4da;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border-radius: .25rem;
+                transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+            }
         </style>
     </head>
     <body class="antialiased">
@@ -38,7 +57,6 @@
             @endif
 
             <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-                
 
                 <div class="flex justify-center pt-8 sm:justify-start sm:pt-0">
                     <div class="p-6">
@@ -55,58 +73,49 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-2">
-                        <?php foreach ($listado as $key => $info): ?>
-                            <div class="p-6">
-                                <div class="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-12 w-12" src="{{url('img/iconos/'.$info->picture)}}" alt="Producto...">
-                                    </div>
-                                    <div class="px-6">
+                    <div class="grid grid-cols-1">
+                        <div class="p-6 bg-white">
+                            <table style="width: 100%" border="1">
+                                <tr>
+                                    <td><img class="h-12 w-12" src="{{url('img/iconos/'.$product->picture)}}" alt="Producto..."></td>
+                                    <td>
                                         <div class="text-xl font-medium text-black">
-                                            <b><?=$info->product_name?></b>
+                                            <b><?=$product->product_name?></b>
                                         </div>
                                         <div class="text-xl font-medium text-black">
-                                            <b style="color: blue; font-size: 1.2em;"><?='COP $'.$info->cost?></b>
+                                            <b style="color: blue; font-size: 1.2em;"><?='COP $'.$product->cost?></b>
                                         </div>
-                                        <p class="text-gray-500"><?=$info->description?></p>
-                                        <div class="flex items-center">
-                                            <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="-mt-px w-5 h-5 text-gray-600">
-                                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                            </svg>
-                                            <a href="{{ route('products.show', $info->id) }}" class="mt-auto bg-violet-800 bg-opacity-50 hover:bg-opacity-75 transition-colors duration-200 rounded-xl font-semibold py-2 px-4 inline-flex">
-                                                <font style="vertical-align: inherit;">
-                                                    <font style="vertical-align: inherit;">Comprar curso</font>
-                                                </font>
-                                            </a>
+                                        <p class="text-gray-500"><?=$product->description?></p>                                              
+                                    </td>
+                                    <td>
+                                        <!--<div>
+                                            <label></label>
+                                            <input type="text" name="" placeholder="Ingresa tú nombre">
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                                        <div>
+                                            <label></label>
+                                            <input type="text" name="" placeholder="Ingresa tú correo electrónico">
+                                        </div>
+                                        <div>
+                                            <label></label>
+                                            <input type="text" name="" placeholder="Ingresa tú número celular">
+                                        </div>-->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <hr>
 
                 <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
                     <div class="text-center text-sm text-gray-500 sm:text-left">
                         <div class="flex items-center">
-                            
+                            &nbsp;
                         </div>
                     </div>
-
                     <div class="ml-4 text-center text-sm text-gray-700 sm:text-right sm:ml-0">
-                        <a href="https://www.alfonsochb.com/" class="ml-1 underline" target="_blank">
-                            Ing: Alfonso Chávez
-                        </a>
+                        <a href="https://www.alfonsochb.com/" class="ml-1 underline" target="_blank">Ing: Alfonso Chávez</a>
                     </div>
                 </div>
                 <br><br>
