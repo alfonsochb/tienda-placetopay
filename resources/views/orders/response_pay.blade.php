@@ -19,25 +19,6 @@
             body {
                 font-family: 'Nunito';
             }
-            input[type=text], input[type=email]{
-                display: block;
-                width: 100%;
-                min-width: 150px;
-                padding: .375rem .75rem;
-                margin-bottom: 5px;
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #212529;
-                background-color: #fff;
-                background-clip: padding-box;
-                border: 1px solid #ced4da;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                border-radius: .25rem;
-                transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-            }
             .btn{
                 color: #fff;
                 background-color: #2DCDA4;
@@ -98,63 +79,78 @@
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1">
                         <div class="p-6 bg-white">
-                            <form action="{{ route('clients.store') }}" method="POST" autocomplete="off" >
-                                @csrf
-                                <table style="width: 100%" border="1">
-                                   
+                            <table style="width: 100%" border="1">
+                                <tr>
+                                    <td>
+                                        <img class="h-12 w-12" src="{{ url('img/iconos/'.$product->picture) }}" alt="{{ $order->product_name }}"/>
+                                    </td>
+                                    <td>
+                                        <div class="text-xl font-medium text-black">
+                                            <b>{{ $order->product_name }}</b>
+                                        </div>
+                                        <div class="text-xl font-medium text-black">
+                                            <b style="color: blue; font-size: 1.2em;">
+                                            	{{ 'COP $'.number_format( $order->product_cost, 2 ) }}
+                                            </b>
+                                        </div>
+                                        <p class="text-gray-500">{{ $product->description }}</p>    
+                                    </td>
+                                    <td>
+                                    	<?php if ( $order->status=='PENDING' ): ?>
+											<div class="text-center p-6 shadow sm:rounded-lg" style="background: #B23CFD; color: white;">
+												<div class="mt-5">
+													<h2 class="text-center">ORDEN DE COMPRA PENDIENTE</h2>
+													<a href="{{ $order->process_url }}" class="btn btn-primary">Continuar con el pagó</a>
+													<h4>{{ 'Ya puedes disfrutar de tu curso!' }}</h4>
+												</div>
+											</div>
+                                    	<?php endif; ?>
 
-                                    <tr>
-                                        <td rowspan="3">
-                                            <img class="h-12 w-12" src="{{url('img/iconos/'.$product->picture)}}" alt="<?=$product->product_name?>"/>
-                                        </td>
-                                        <td rowspan="3">
-                                            <div class="text-xl font-medium text-black">
-                                                <b><?=$product->product_name?></b>
-                                            </div>
-                                            <div class="text-xl font-medium text-black">
-                                                <b style="color: blue; font-size: 1.2em;">
-                                                    <?='COP $'.number_format( $product->cost, 2 )?>
-                                                </b>
-                                            </div>
-                                            <p class="text-gray-500"><?=$product->description?></p>    
-                                        </td>
-                                        <td>
-                                            <div class="form-group px-2">
-                                                <strong class="text-gray-600">Nombre:</strong>
-                                                <input type="text" name="nombres" placeholder="Ingresa tu nombre" required="true">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group px-2">
-                                                <strong class="text-gray-600">Apellido:</strong>
-                                                <input type="text" name="apellidos" placeholder="Ingresa tus apellidos" required="true">
-                                            </div>                                            
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group px-2">
-                                                <strong class="text-gray-600">Correo electrónico:</strong>
-                                                <input type="email" name="email" placeholder="Ingresa tu correo" required="true">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group px-2">
-                                                <strong class="text-gray-600">Teléfono móvil:</strong>
-                                                <input type="text" name="celular" placeholder="Ingresa tu móvil" required="true" maxlength="10" onkeypress="return valideKey(event);" >
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                                                <button type="submit" class="btn btn-primary">Pagar este curso</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <input type="hidden" name="product_id" value="<?=$product->id?>" readonly="true">
-                            </form>
+                                    	<?php if ( $order->status=='APPROVED' ): ?>
+											<div class="text-center p-6 shadow sm:rounded-lg" style="background: #21C0AC; color: white;">
+												<div class="mt-5">
+													<h2 class="text-center">ORDEN DE COMPRA APROVADA</h2>
+													<img class="h-12 w-12" src="{{ url('img/felicidades.png') }}"/>
+													<h4>{{ 'Ya puedes disfrutar de tu curso!' }}</h4>
+												</div>
+											</div>
+                                    	<?php endif; ?>
+
+                                    	<?php if ( $order->status=='REJECTED' ): ?>
+											<div class="text-center p-6 shadow sm:rounded-lg" style="background: #FFA900; color: white;">
+												<div class="mt-5">
+													<h2 class="text-center">ORDEN DE COMPRA RECHAZADA</h2>
+													<a href="{{ route('products.show', $order->product_id) }}" class="btn btn-primary">Comprar curso</a>
+													<h4>{{ 'Ya puedes disfrutar de tu curso!' }}</h4>
+												</div>
+											</div>
+                                    	<?php endif; ?>                                        	
+
+                                    	<!--
+                                    	<pre>
+										[orden] => Array
+										    (
+										        [id] => 4
+										        [client_id] => 4
+										        [product_id] => 16
+										        [customer_name] => Pepito Perez
+										        [customer_email] => pepito_perez@ejemplo.com
+										        [customer_mobile] => 3104444444
+										        [product_name] => Curso de yii
+										        [product_cost] => 20000
+										        [order_ref] => REF-CL4-PR16
+										        [request_id] => 447428
+										        [pass_message] => La petición se encuentra pendiente
+										        [process_url] => https://test.placetopay.com/redirection/session/447428/c130495a01624bf77df3b91a65f73781
+										        [status] => PENDING
+										        [created_at] => 2021-01-25 02:47:56
+										        [updated_at] => 2021-01-25 03:11:32
+										    )
+                                    	</pre>    
+                                    	-->                                   
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -173,16 +169,7 @@
             </div>
         </div>
     </body>
-    <script type="text/javascript">
-        function valideKey(evt){
-            var code = (evt.which) ? evt.which : evt.keyCode;
-            if(code==8) {
-              return true;
-            } else if(code>=48 && code<=57) {
-              return true;
-            } else{
-              return false;
-            }
-        }
-    </script> 
 </html>
+
+
+

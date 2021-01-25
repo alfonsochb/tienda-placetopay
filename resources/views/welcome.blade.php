@@ -55,13 +55,6 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <?php foreach ($listado as $key => $info): ?>
@@ -75,7 +68,7 @@
                                             <b><?=$info->product_name?></b>
                                         </div>
                                         <div class="text-xl font-medium text-black">
-                                            <b style="color: blue; font-size: 1.2em;"><?='COP $'.$info->cost?></b>
+                                            <b style="color: blue; font-size: 1.2em;"><?='COP $'.number_format( $info->cost, 2 )?></b>
                                         </div>
                                         <p class="text-gray-500"><?=$info->description?></p>
                                         <div class="flex items-center">
@@ -84,7 +77,7 @@
                                             </svg>
                                             <a href="{{ route('products.show', $info->id) }}" class="mt-auto bg-violet-800 bg-opacity-50 hover:bg-opacity-75 transition-colors duration-200 rounded-xl font-semibold py-2 px-4 inline-flex">
                                                 <font style="vertical-align: inherit;">
-                                                    <font style="vertical-align: inherit;">Comprar curso</font>
+                                                    <font style="vertical-align: inherit; color: green;">Comprar curso</font>
                                                 </font>
                                             </a>
                                         </div>
