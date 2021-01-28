@@ -51,12 +51,11 @@ class OrdersController extends Controller
 				'product' => Product::where('id', $order->product_id )->first()
 			]);
         }catch(\Exception $e) {
-        	/*
-        	* Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	*/
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
+            # Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+            $message = $e->getLine()." ".$e->getMessage();
+            return redirect('products')->with('mensaje', $message);
         }
-        return redirect('products')->with('error', 'Fallo la consulta del estado de la órden.');
+        return redirect('products')->with('mensaje', 'Fallo inesperado, por favor intente más tarde.');
     }
 
 

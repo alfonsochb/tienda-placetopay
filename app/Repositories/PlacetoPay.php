@@ -82,17 +82,13 @@ class PlacetoPay
 			    'ipAddress' => '127.0.0.1',
 			    'userAgent' => 'PlacetoPay Sandbox'
 			];
-			//echo "<pre>"; print_r($request); die;
 			$response = $this->getJson( $this->url_api."/session", $request ); 
             return $response;
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
-        	return false;
+        	return "No se ha logrado el checkout, ".$e->getLine()." ".$e->getMessage();
         }
 	}
-
-
 
 
     /**
@@ -110,8 +106,7 @@ class PlacetoPay
 			return $this->getJson( $this->url_api."/session/$request_id", $request );
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
-        	return false;
+        	return "No se ha logrado obtener información, ".$e->getLine()." ".$e->getMessage();
         }
 	}
 
@@ -133,8 +128,7 @@ class PlacetoPay
 			return $response;
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
-        	return false;
+        	return "No se ha logrado reversar transacción, ".$e->getLine()." ".$e->getMessage();
         }
 	}
 

@@ -16,7 +16,7 @@ class ClientsController extends Controller
     public function __construct( PlacetoPay $placetopay )
     {
         // Integración pasarela de pagos por inyección de dependencias.
-        $this->placetopay=$placetopay;
+        $this->placetopay = $placetopay;
     }
 
     /**
@@ -74,7 +74,8 @@ class ClientsController extends Controller
 	        }
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	return redirect('products')->with('mensaje', $e->getLine().' '.$e->getMessage());
+        	$message = $e->getLine()." ".$e->getMessage();
+        	return redirect('products')->with('mensaje', $message);
         }
         return redirect('products')->with('mensaje', 'Fallo inesperado, por favor intente más tarde.');
     }
@@ -140,7 +141,8 @@ class ClientsController extends Controller
         	}
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	return redirect('products')->with('mensaje', $e->getLine().' '.$e->getMessage());
+        	$message = $e->getLine()." ".$e->getMessage();
+        	return redirect('products')->with('mensaje', $message);
         }
         return redirect('products')->with('mensaje', 'Fallo inesperado, por favor intente más tarde.');
     }
