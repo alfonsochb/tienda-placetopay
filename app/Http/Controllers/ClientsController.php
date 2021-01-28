@@ -58,11 +58,14 @@ class ClientsController extends Controller
 				$params_payment = [
 					'product_id' 	=> $data['product_id'],
 					'client_id' 	=> $client->id,
-					'order_ref' 	=> 'REF-CL'.$client->id.'-PR'.$data['product_id'],
+					'email' 		=> $client->email,
+					'document' 		=> '',
+					'document_type' => '',
 		            'names' 		=> $client->names,
 		            'surnames' 		=> $client->surnames,
-		            'email' 		=> $client->email,
 		            'phone' 		=> $client->phone,
+					'reference' 	=> 'REF-CL'.$client->id.'-PR'.$data['product_id'],
+
 				];
 	        }
 
@@ -70,12 +73,10 @@ class ClientsController extends Controller
 	        	return $this->registerOrder( $params_payment );
 	        }
         }catch(\Exception $e) {
-        	/*
-        	* Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	*/
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
+        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+        	return redirect('products')->with('mensaje', $e->getLine().' '.$e->getMessage());
         }
-        return redirect('products')->with('error', 'Fallo inesperado, no se puede continuar con la compra, por favor intente más tarde.');
+        return redirect('products')->with('mensaje', 'Fallo inesperado, por favor intente más tarde.');
     }
 
 
@@ -125,7 +126,7 @@ class ClientsController extends Controller
 					'customer_mobile' => $payment->phone,
 					'product_name' => $payment->product_name,
 					'product_cost' => $payment->cost,
-					'order_ref' => $payment->order_ref,
+					'reference' => $payment->reference,
 					'request_id' => $result->requestId,
 					'pass_message' => $result->status->message,
 					'process_url' => $result->processUrl,
@@ -138,13 +139,10 @@ class ClientsController extends Controller
 		        exit;
         	}
         }catch(\Exception $e) {
-        	/*
-        	* Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	* echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
-        	*/
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
+        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+        	return redirect('products')->with('mensaje', $e->getLine().' '.$e->getMessage());
         }
-        return redirect('products')->with('error', 'Fallo registrando la órden, por favor intente nuevamente');
+        return redirect('products')->with('mensaje', 'Fallo inesperado, por favor intente más tarde.');
     }
 
 

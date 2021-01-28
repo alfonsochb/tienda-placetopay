@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->string('customer_mobile')->comment('Replicado por futuros cambios en relación.');
             $table->string('product_name', 100)->comment('Replicado por futuros cambios en relación.');
             $table->double('product_cost', 8, 2)->comment('Costo en el instante de compra.');
-            $table->string('order_ref', 100)->comment('Referencia de órden.');
+            $table->string('reference', 100)->comment('Referencia de órden.');
             $table->integer('request_id')->comment('Identificador de sesión pasarela');
             $table->string('pass_message')->nullable()->comment('Mensaje de pasarela de pagos.');
             $table->string('process_url')->nullable()->comment('URL de procesamiento');

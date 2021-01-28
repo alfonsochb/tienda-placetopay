@@ -32,12 +32,12 @@ class OrdersController extends Controller
     {
         try{
 	    	
-	    	$order = Order::where('order_ref', strtoupper($response))->first();
+	    	$order = Order::where('reference', strtoupper($response))->first();
 	    	if ( !isset($order) or empty($order) ) {
 	    		throw new \Exception('No se tiene identificación de la órden.', 000 );
 	    	}
 			
-			$payment = $this->placetopay->getInfoOrder( $order->request_id );
+			$payment = $this->placetopay->requestInformation( $order->request_id );
         	if ( !isset($payment->status->status) ) {
         		throw new \Exception('Se ha perdido la conección con la pasarela de pagos.', 000 );
         	}
@@ -46,7 +46,7 @@ class OrdersController extends Controller
         		'status' => strtoupper($payment->status->status)
         	]);
 			return view('orders.response_pay', [ 
-				'order' => Order::where('order_ref', strtoupper($response))->first(),
+				'order' => Order::where('reference', strtoupper($response))->first(),
 				'payment' => $payment,
 				'product' => Product::where('id', $order->product_id )->first()
 			]);

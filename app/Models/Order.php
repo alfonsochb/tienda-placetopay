@@ -23,7 +23,7 @@ class Order extends Model
 		'customer_mobile',
 		'product_name',
 		'product_cost',
-		'order_ref',
+		'reference',
 		'request_id',
 		'pass_message',
 		'process_url',

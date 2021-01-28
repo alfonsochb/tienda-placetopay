@@ -22,20 +22,10 @@ class PlacetoPay
     private $conection = [];
 
 
+    private $url_api;
+
+
     public function __construct()
-    {
-    	$this->conection();
-    	//...
-    }
-
-
-    /**
-     * Construye el arreglo de conección con las variables de entorno.
-     *
-     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @return struc | Estructura PHP.
-     */
-    public function conection()
     {
     	$seed = date('c');
 		if (function_exists('random_bytes')) {
@@ -45,46 +35,19 @@ class PlacetoPay
 		} else {
 		    $nonce = mt_rand();
 		}
-		$nonce_base64 = base64_encode($nonce);
 		$tran_key = base64_encode(sha1($nonce . $seed . config('app_payments.tran_key'), true));
         $this->conection = [
 			'login' => config('app_payments.login'),
 			'seed' => $seed,
-			'nonce' => $nonce_base64,
+			'nonce' => base64_encode($nonce),
 			'tranKey' => $tran_key
 		];
+		$this->url_api = "https://test.placetopay.com/redirection/api";
     }
 
 
     /**
-     * Realizar la petición a la API PlacetoPay.
-     *
-     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $request | Armado de datos requeridos por la API.
-     * @param  $api_params | Identificador de una órden de compra.
-     * @return struc | Estructura PHP.
-     */
-    public function getJson( $request='', $api_params=null )
-    {
-		$url = config('app_payments.url_request');
-		if ( $api_params ) {
-			$url.=$api_params;
-		}
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_HEADER, false);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-		curl_setopt($curl, CURLOPT_POST, true);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));
-		$json_response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		return json_decode($json_response);
-    }
-
-
-    /**
-     * Recibir las variables de una orden de compra y realizar transacción a la pasarela de pagos.
-     *
+     * @method Recibir los parametros de una orden de compra y realizar transacción en Placetopay.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
      * @param  $params | Variables de la orden de compra y pasarela de pago.
      * @return struc | Estructura PHP.
@@ -102,12 +65,12 @@ class PlacetoPay
 					'name' => $data->names,
 					'surname' => $data->surnames,
 					'email' => $data->email,
-					'document' => '',
-					'documentType' => '',
+					'document' => $data->document,
+					'documentType' => $data->document_type,
 					'mobile' => $data->phone
 				],
 			    'payment' => [
-			        'reference' => $data->order_ref,
+			        'reference' => $data->reference,
 			        'description' => $data->product_name,
 			        'amount' => [
 			            'currency' => 'COP',
@@ -115,34 +78,36 @@ class PlacetoPay
 			        ]
 			    ],
 			    'expiration' => date('c', strtotime('+2 days')),
-			    'returnUrl' => route('orders.response', $data->order_ref),
+			    'returnUrl' => route('orders.response', $data->reference),
 			    'ipAddress' => '127.0.0.1',
 			    'userAgent' => 'PlacetoPay Sandbox'
 			];
 			//echo "<pre>"; print_r($request); die;
-            return $this->getJson( $request ); 
+			$response = $this->getJson( $this->url_api."/session", $request ); 
+            return $response;
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
+        	echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
         	return false;
         }
 	}
-	
+
+
+
 
     /**
-     * Obtener información de una órden de compra.
-     *
+     * @method Obtener información de una órden de compra.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $request_id | Referencia para identificar la órden.
+     * @param  $pasarela_id | id de la pasarela para identificar la órden.
      * @return struc | Estructura PHP.
      */
-	public function getInfoOrder( $request_id=null )
+	public function requestInformation( $request_id=null )
 	{
         try{
 			$request = [
 				'auth' => $this->conection,
 			];
-			return $this->getJson( $request, $request_id );
+			return $this->getJson( $this->url_api."/session/$request_id", $request );
         }catch(\Exception $e) {
         	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
         	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
@@ -150,6 +115,49 @@ class PlacetoPay
         }
 	}
 
+
+    /**
+     * @method Reversar una orden de compra en estado aprovada.
+     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
+     * @param  $reference | Ina referencia interna que la pasarela retorna en el paso anterior.
+     * @return struc | Estructura PHP.
+     */
+	public function reversePayment( $reference=null )
+	{
+        try{
+			$request = [
+				'auth' => $this->conection,
+				'internalReference' => $reference
+			];
+			$response = $this->getJson( $this->url_api."/reverse", $request );
+			return $response;
+        }catch(\Exception $e) {
+        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+        	//echo "<pre>Mensaje: ".$e->getLine().' - '.$e->getMessage(); die;
+        	return false;
+        }
+	}
+
+
+    /**
+     * @method Realizar la petición a la API PlacetoPay por metodo POST.
+     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
+     * @param  $request | Armado de datos requeridos por la API.
+     * @param  $api_params | Identificador de una órden de compra.
+     * @return struc | Estructura PHP.
+     */
+    public function getJson( $url=null, $request='' )
+    {
+		$curl = curl_init( trim($url) );
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));
+		$json_response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		return json_decode($json_response);
+    }
 
 
 }

@@ -60,11 +60,10 @@ Puedes clonar este repositorio desde [<b>GitHub: alfonsochb/tienda-placetopay</b
     ```
 
 7. Adicionar las siguientes variables de entorno en el archivo <b>.env</b> y configurar con las que provee <b>Placetopay</b>.
-También puedes consultar en la documentación de la página `https://placetopay.github.io/web-checkout-api-docs` allí encontrarás la URL de pruebas de la API y también las credenciales de acceso en modo de pruebas.
+También puedes consultar en la documentación de la página `https://placetopay.github.io/web-checkout-api-docs` allí encontrarás las credenciales de acceso en modo de pruebas.
     ```bash
     PLACETOPAY_LOGIN='**************************'
     PLACETOPAY_TRANKEY='**************************'
-    PLACETOPAY_URL_REQUEST='tu_url_placetopay_de_pruebas o tu_url_placetopay_de_productiva'
     ```
 
 8. Ejecutar las migraciones para crear las tablas
