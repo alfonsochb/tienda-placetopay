@@ -1,30 +1,34 @@
 <?php
 namespace App\Repositories;
 
-/*
- *
- * Este archivo es parte de una prueba de integración de una tienda virtual con la
- * pasarela de pagos PlacetoPay de Evertec.
- *
- * (c) Ing. Alfonso Chávez Baquero <alfonso.chb@gmail.com>
- * GitHub: https://github.com/alfonsochb
- * Site: https://www.alfonsochb.com
- * 
- * Es requerido datos de configuracion de las archivos:
- * \tienda-placetopay\config\app_payments.php 
- * \tienda-placetopay\.env
- *
- */
 
+/**
+* @category Sistemas integrales de pasarelas de pago.
+* @since Creado: 2021-02-02
+* @author Ing. Alfonso Chávez Baquero <alfonso.chb@gmail.com>
+* @link Visita mi sitio: https://alfonsochb.com/
+* @see Este archivo es parte de una prueba de integración de una tienda virtual con la
+* pasarela de pagos PlacetoPay de Evertec.
+* Es requerido datos de configuracion de las archivos:
+* \tienda-placetopay\config\app_payments.php 
+* \tienda-placetopay\.env
+*/
 class PlacetoPay
 {
 
+	# Variable en la cual se inicializa la conexión de webCheckout
     private $conection = [];
 
 
+    # URL desde donde se sirve la API.
     private $url_api;
 
 
+    /**
+     * @method __construct - Método constructor de la clase.
+     * @author Alfonso Chávez <alfonso.chb@gmail.com>
+     * @return void - Retorna la inicialización del objeto.
+    */
     public function __construct()
     {
     	$seed = date('c');
@@ -47,10 +51,10 @@ class PlacetoPay
 
 
     /**
-     * @method Recibir los parametros de una orden de compra y realizar transacción en Placetopay.
+     * @method webCheckout - Realiza la verificación de autenticación con Placetopay.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $params | Variables de la orden de compra y pasarela de pago.
-     * @return struc | Estructura PHP.
+     * @param  (array) $params - Variables de la orden de compra y pasarela de pago.
+     * @return (array) - Estructura PHP.
      */
 	public function webCheckout( $params=null )
 	{
@@ -92,10 +96,10 @@ class PlacetoPay
 
 
     /**
-     * @method Obtener información de una órden de compra.
+     * @method requestInformation - Obtener información de una órden de compra.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $pasarela_id | id de la pasarela para identificar la órden.
-     * @return struc | Estructura PHP.
+     * @param  (int) $request_id - Id de la pasarela para identificar la órden en la pasarela.
+     * @return (array) - Estructura PHP.
      */
 	public function requestInformation( $request_id=null )
 	{
@@ -112,10 +116,10 @@ class PlacetoPay
 
 
     /**
-     * @method Reversar una orden de compra en estado aprovada.
+     * @method reversePayment - Reversar una orden de compra en estado aprovada.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $reference | Ina referencia interna que la pasarela retorna en el paso anterior.
-     * @return struc | Estructura PHP.
+     * @param  (strin) $reference - Referencia interna que la pasarela retorna en requestInformation.
+     * @return (array) - Estructura con información de estado reversar.
      */
 	public function reversePayment( $reference=null )
 	{
@@ -133,12 +137,12 @@ class PlacetoPay
 	}
 
 
-    /**
-     * @method Realizar la petición a la API PlacetoPay por metodo POST.
-     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  $request | Armado de datos requeridos por la API.
-     * @param  $api_params | Identificador de una órden de compra.
-     * @return struc | Estructura PHP.
+   /**
+     * @method getJson - Método para obtener datos desde las API Restfull.
+     * @author Alfonso Chávez <alfonso.chb@gmail.com>
+     * @param (string) $url - Indica la URL desde donde se consumirá el recurso.
+     * @param (array) $request - Los parametros requeridos por el API Restfull.
+     * @return (array structure) - Estructura de datos limpios.
      */
     public function getJson( $url=null, $request='' )
     {
