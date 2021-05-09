@@ -77,7 +77,7 @@ También puedes consultar en la documentación de la página `https://placetopay
     ```
 
 10. Abre el proyecto en tu navegador `https://tuproyectoclonado.com/` y si has realizado correctamente todos los pasos mencionados, entonces podrás ver una interfaz de tienda virtual de ejemplo como la que aparece en la imagen, con un proyecto funcional.
-<p align="center"><img src="https://i.postimg.cc/zvYJ5JCC/Captura-Tienda.png" height="400"></p>
+<p align="center"><img src="https://i.postimg.cc/YSkCjbS5/landing-page.png" height="400"></p>
 <br>
 
 ## Archivos importantes
