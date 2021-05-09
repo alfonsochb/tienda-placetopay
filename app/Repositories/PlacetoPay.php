@@ -3,31 +3,30 @@ namespace App\Repositories;
 
 
 /**
-* @category Sistemas integrales de pasarelas de pago.
+* @category Sistema integral de pasarela de pago WebCheckOut Placetopay.
 * @since Creado: 2021-02-02
 * @author Ing. Alfonso Chávez Baquero <alfonso.chb@gmail.com>
-* @link Visita mi sitio: https://alfonsochb.com/
-* @see Este archivo es parte de una prueba de integración de una tienda virtual con la
-* pasarela de pagos PlacetoPay de Evertec.
-* Es requerido datos de configuracion de las archivos:
-* \tienda-placetopay\config\app_payments.php 
+* @see Este archivo es parte de una prueba de integración de tienda virtual con la
+* pasarela de pago PlacetoPay de Evertec.
+* Se requieren datos de configuración de archivo:
+* \tienda-placetopay\config\app_payments.php
 * \tienda-placetopay\.env
 */
 class PlacetoPay
 {
 
-	# Variable en la cual se inicializa la conexión de webCheckout
+	# Variable en la que se inicializa la conexión con webCheckout.
     private $conection = [];
 
 
-    # URL desde donde se sirve la API.
+    # URL desde donde se sirve la API de webCheckout.
     private $url_api;
 
 
     /**
-     * @method __construct - Método constructor de la clase.
+     * @method __construct - M{etodo constructor de la clase.
      * @author Alfonso Chávez <alfonso.chb@gmail.com>
-     * @return void - Retorna la inicialización del objeto.
+     * @return (void) - Retorna la inicialización del objeto.
     */
     public function __construct()
     {
@@ -53,24 +52,23 @@ class PlacetoPay
     /**
      * @method webCheckout - Realiza la verificación de autenticación con Placetopay.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  (array) $params - Variables de la orden de compra y pasarela de pago.
-     * @return (array) - Estructura PHP.
+     * @param  (array) $params - Variables con detalle de la orden de compra y pasarela de pago.
+     * @return (array) - PHP estructura.
      */
 	public function webCheckout( $params=null )
 	{
         try{
 	    	if ( !$params or empty($params) ) return false;
 
-	    	$data = !is_object($params) ? (object)$params : $params;
-
+	    	$data = is_object($params) ? $params : (object)$params;
 			$request = [
 				'auth' => $this->conection,
 				'buyer' => [
 					'name' => $data->names,
 					'surname' => $data->surnames,
 					'email' => $data->email,
-					'document' => $data->document,
-					'documentType' => $data->document_type,
+					'document' => '',
+					'documentType' => '',
 					'mobile' => $data->phone
 				],
 			    'payment' => [
@@ -89,37 +87,39 @@ class PlacetoPay
 			$response = $this->getJson( $this->url_api."/session", $request ); 
             return $response;
         }catch(\Exception $e) {
-        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
-        	return "No se ha logrado el checkout, ".$e->getLine()." ".$e->getMessage();
+        	/**
+        	 * @todo - Se debe guardar en un log ($e->getCode(), $e->getMessage()).
+        	 */
+        	return "No se ha logrado el checkout, linea: ".$e->getLine()." ".$e->getMessage();
         }
 	}
 
 
     /**
-     * @method requestInformation - Obtener información de una órden de compra.
-     * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  (int) $request_id - Id de la pasarela para identificar la órden en la pasarela.
-     * @return (array) - Estructura PHP.
+	 * @method requestInformation - Obtener información sobre una orden de compra.
+     * @author Alfonso Chávez <alfonso.chb@gmail.com>
+     * @param (int) $request_id - Id clave para identificar el pedido en la pasarela de pago.
+     * @return (array) - PHP estructura.
      */
 	public function requestInformation( $request_id=null )
 	{
         try{
-			$request = [
-				'auth' => $this->conection,
-			];
+			$request = [ 'auth' => $this->conection ];
 			return $this->getJson( $this->url_api."/session/$request_id", $request );
         }catch(\Exception $e) {
-        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+        	/**
+        	 * @todo - Se debe guardar en un log ($e->getCode(), $e->getMessage()).
+        	 */
         	return "No se ha logrado obtener información, ".$e->getLine()." ".$e->getMessage();
         }
 	}
 
 
     /**
-     * @method reversePayment - Reversar una orden de compra en estado aprovada.
+     * @method reversePayment - Revertir una orden de compra al estado aprobado.
      * @author Alfonso Chávez <alfonso.chb@gmail.com> 
-     * @param  (strin) $reference - Referencia interna que la pasarela retorna en requestInformation.
-     * @return (array) - Estructura con información de estado reversar.
+     * @param  (strin) $reference - Referencia interna que devuelve la clave de enlace en requestInformation.
+     * @return (array) - estructura con información del proceso de reversar.
      */
 	public function reversePayment( $reference=null )
 	{
@@ -131,18 +131,20 @@ class PlacetoPay
 			$response = $this->getJson( $this->url_api."/reverse", $request );
 			return $response;
         }catch(\Exception $e) {
-        	# Guardar en un log transaccional ($e->getCode(), $e->getMessage()).
+        	/**
+        	 * @todo - Se debe guardar en un log ($e->getCode(), $e->getMessage()).
+        	 */
         	return "No se ha logrado reversar transacción, ".$e->getLine()." ".$e->getMessage();
         }
 	}
 
 
    /**
-     * @method getJson - Método para obtener datos desde las API Restfull.
+     * @method getJson - Método para obtener información en formato JSON Restful APIs.
      * @author Alfonso Chávez <alfonso.chb@gmail.com>
      * @param (string) $url - Indica la URL desde donde se consumirá el recurso.
-     * @param (array) $request - Los parametros requeridos por el API Restfull.
-     * @return (array structure) - Estructura de datos limpios.
+     * @param (array) $request - Los parámetros requeridos por el servicio Restfull API.
+     * @return (array structure) - Estructura de datos formateado a PHP.
      */
     public function getJson( $url=null, $request='' )
     {

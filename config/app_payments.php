@@ -1,12 +1,11 @@
 <?php
-
 return [
 
     /*
     |--------------------------------------------------------------------------
     | Application Login
     |--------------------------------------------------------------------------
-    | Esta es la variable de login para conectar la pasarela de pago.
+    | This is the login variable to connect the payment gateway.
     |
     */
     'login' => env('PLACETOPAY_LOGIN', null),
@@ -16,7 +15,7 @@ return [
     |--------------------------------------------------------------------------
     | Application TranKey
     |--------------------------------------------------------------------------
-    | Esta es la variable de password para conectar la pasarela de pago.
+    | This is the password variable to connect the payment gateway.
     |
     */
     'tran_key' => env('PLACETOPAY_TRANKEY', null),
@@ -26,7 +25,7 @@ return [
     |--------------------------------------------------------------------------
     | Application Url Request
     |--------------------------------------------------------------------------
-    | Esta es la variable de consumo de los servicios para conectar la pasarela de pago.
+    | This is the variable of consumption of the services to connect the payment gateway.
     |
     */
     'url_request' => env('PLACETOPAY_URL_REQUEST', null),

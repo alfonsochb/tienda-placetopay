@@ -26,11 +26,13 @@ class CreateOrdersTable extends Migration
             $table->string('customer_mobile')->comment('Replicado por futuros cambios en relación.');
             $table->string('product_name', 100)->comment('Replicado por futuros cambios en relación.');
             $table->double('product_cost', 8, 2)->comment('Costo en el instante de compra.');
-            $table->string('reference', 100)->comment('Referencia de órden.');
-            $table->integer('request_id')->comment('Identificador de sesión pasarela');
+            
+            $table->string('reference', 100)->nullable()->comment('Referencia de órden.');
+            $table->integer('request_id')->nullable()->comment('Identificador de sesión pasarela');
             $table->string('pass_message')->nullable()->comment('Mensaje de pasarela de pagos.');
             $table->string('process_url')->nullable()->comment('URL de procesamiento');
-            $table->string('status', 10)->nullable()->comment('estados; CREATED, PAYED, REJECTED');
+            $table->string('status', 10)->nullable()->comment('estados: CREATED, PAYED, REJECTED');
+            
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients')->onUpdate('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade');
